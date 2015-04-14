@@ -178,6 +178,12 @@ svgtiny_code svgtiny_parse_svg(Poco::XML::Element *svg,
 				&min_x, &min_y, &vwidth, &vheight) == 4 ||
 				sscanf(s, "%f %f %f %f",
 				&min_x, &min_y, &vwidth, &vheight) == 4) {
+                    
+                    /*ADDED BY Freire on 14-April-2015*/
+                    state.viewport_height = vheight;
+                    state.viewport_width = vwidth;
+                    /*-------*/
+
 			state.ctm.a = (float) state.viewport_width / vwidth;
 			state.ctm.d = (float) state.viewport_height / vheight;
 			state.ctm.e += -min_x * state.ctm.a;
