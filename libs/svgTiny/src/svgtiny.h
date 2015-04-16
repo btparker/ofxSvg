@@ -63,6 +63,8 @@ struct svgtiny_shape {
 	svgtiny_colour fill;
 	svgtiny_colour stroke;
 	int stroke_width;
+    float opacity;
+
 };
 
 struct svgtiny_diagram {
