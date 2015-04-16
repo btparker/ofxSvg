@@ -1,6 +1,6 @@
 #pragma once
 
-//#include "ofMain.h"
+#include "ofMain.h"
 #include "svgtiny.h"
 #include "ofPath.h"
 #include "ofTypes.h"
@@ -16,7 +16,7 @@ class ofxSVG {
 			return height;
 		}
 		void load(string path);
-		void draw();
+		void draw(float opacity = 1.0);
 
 		int getNumPath(){
 			return paths.size();
@@ -24,6 +24,17 @@ class ofxSVG {
 		ofPath & getPathAt(int n){
 			return paths[n];
 		}
+    
+        ofTexture* getTexture(){
+            if(rasterized.isAllocated()){
+                return &rasterized.getTexture();
+            }
+            else{
+                return NULL;
+            }
+        }
+    
+        void rasterize();
 
 	private:
 
@@ -33,5 +44,7 @@ class ofxSVG {
 
 		void setupDiagram(struct svgtiny_diagram * diagram);
 		void setupShape(struct svgtiny_shape * shape, ofPath & path);
+    
+        ofFbo rasterized;
 
 };

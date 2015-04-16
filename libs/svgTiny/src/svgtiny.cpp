@@ -35,7 +35,7 @@ long lroundf (float x) {
 #define KAPPA		0.5522847498
 
 static svgtiny_code svgtiny_parse_svg(Poco::XML::Element *svg,
-		struct svgtiny_parse_state state);
+		struct svgtiny_parse_state& state);
 static svgtiny_code svgtiny_parse_path(Poco::XML::Element *path,
 		struct svgtiny_parse_state state);
 static svgtiny_code svgtiny_parse_rect(Poco::XML::Element *rect,
@@ -145,7 +145,14 @@ svgtiny_code svgtiny_parse(struct svgtiny_diagram *diagram,
 
 	/* parse tree */
 	code = svgtiny_parse_svg(svg, state);
-
+    
+    if(diagram->width == 0){
+        diagram->width = state.viewport_width;
+    }
+    
+    if(diagram->height == 0){
+        diagram->height = state.viewport_height;
+    }
 	/* free XML tree */
 	//xmlFreeDoc(document);
 
@@ -158,7 +165,7 @@ svgtiny_code svgtiny_parse(struct svgtiny_diagram *diagram,
  */
 
 svgtiny_code svgtiny_parse_svg(Poco::XML::Element *svg,
-		struct svgtiny_parse_state state)
+		struct svgtiny_parse_state& state)
 {
 	float x, y, width, height;
 	Poco::XML::Attr *view_box;
@@ -179,10 +186,10 @@ svgtiny_code svgtiny_parse_svg(Poco::XML::Element *svg,
 				sscanf(s, "%f %f %f %f",
 				&min_x, &min_y, &vwidth, &vheight) == 4) {
                     
-                    /*ADDED BY Freire on 14-April-2015*/
-                    state.viewport_height = vheight;
-                    state.viewport_width = vwidth;
-                    /*-------*/
+            /*ADDED BY Freire on 14-April-2015*/
+            state.viewport_height = vheight;
+            state.viewport_width = vwidth;
+            /*-------*/
 
 			state.ctm.a = (float) state.viewport_width / vwidth;
 			state.ctm.d = (float) state.viewport_height / vheight;
@@ -192,7 +199,6 @@ svgtiny_code svgtiny_parse_svg(Poco::XML::Element *svg,
 	}
 
 	svgtiny_parse_transform_attributes(svg, &state);
-
 
     // this is how this should work, but it doesn't
     //Poco::XML::NodeIterator it(svg, Poco::XML::NodeFilter::SHOW_ELEMENT | Poco::XML::NodeFilter::SHOW_TEXT);

@@ -48,12 +48,39 @@ void ofxSVG::load(string path){
 	setupDiagram(diagram);
 
 	svgtiny_free(diagram);
+    
+    ofFbo::Settings fbo;
+    fbo.width = getWidth();
+    fbo.height = getHeight();
+    fbo.internalformat = GL_RGBA;
+    fbo.numSamples = 8;
+    fbo.numColorbuffers = 3;
+    
+    rasterized.allocate(fbo);
+    rasterize();
 }
 
-void ofxSVG::draw(){
+void ofxSVG::rasterize(){
+    rasterized.begin();
+    ofClear(0,0,0,0);
+    draw();
+    rasterized.end();
+}
+
+void ofxSVG::draw(float opacity){
+    ofDisableAlphaBlending();
+    ofColor pathColor;
+    int a = 255;
 	for(int i = 0; i < (int)paths.size(); i++){
-		paths[i].draw();
+        pathColor = paths[i].getFillColor();
+        a = pathColor.a;
+        pathColor.a *= opacity;
+        paths[i].setFillColor(pathColor);
+        paths[i].draw();
+        pathColor.a = a;
+        paths[i].setFillColor(pathColor);
 	}
+    ofEnableAlphaBlending();
 }
 
 
