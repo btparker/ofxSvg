@@ -3,6 +3,7 @@
 
 ofxSVG::~ofxSVG(){
 	paths.clear();
+    rasterized.clear();
 }
 
 void ofxSVG::load(string path){
@@ -48,19 +49,19 @@ void ofxSVG::load(string path){
 	setupDiagram(diagram);
 
 	svgtiny_free(diagram);
-    
-    ofFbo::Settings fbo;
-    fbo.width = getWidth();
-    fbo.height = getHeight();
-    fbo.internalformat = GL_RGBA;
-    fbo.numSamples = 8;
-    fbo.numColorbuffers = 3;
-    
-    rasterized.allocate(fbo);
-    rasterize();
 }
 
 void ofxSVG::rasterize(){
+    if(!rasterized.isAllocated()){
+        ofFbo::Settings fbo;
+        fbo.width = getWidth();
+        fbo.height = getHeight();
+        fbo.internalformat = GL_RGBA;
+        fbo.numSamples = 8;
+        fbo.numColorbuffers = 3;
+        
+        rasterized.allocate(fbo);
+    }
     rasterized.begin();
     ofClear(0,0,0,0);
     draw();

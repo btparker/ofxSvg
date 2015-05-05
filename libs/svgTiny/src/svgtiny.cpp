@@ -154,7 +154,7 @@ svgtiny_code svgtiny_parse(struct svgtiny_diagram *diagram,
         diagram->height = state.viewport_height;
     }
 	/* free XML tree */
-	//xmlFreeDoc(document);
+    document->release();
 
 	return code;
 }
