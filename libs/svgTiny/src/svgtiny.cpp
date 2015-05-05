@@ -142,6 +142,7 @@ svgtiny_code svgtiny_parse(struct svgtiny_diagram *diagram,
 	state.stroke = svgtiny_TRANSPARENT;
 	state.stroke_width = 1;
 	state.linear_gradient_stop_count = 0;
+    state.opacity = 1;
 
 	/* parse tree */
 	code = svgtiny_parse_svg(svg, state);
@@ -994,6 +995,34 @@ float svgtiny_parse_length(const char *s, int viewport_size,
 	return 0;
 }
 
+/**
+ * Parse opacity.
+ */
+void svgtiny_opacity_parser(const Poco::XML::Element *node, struct svgtiny_parse_state *state)
+{
+    //const xmlAttr *attr;
+    const Poco::XML::Attr *attr;
+    
+    //for( attr = node->FirstAttribute(); attr; attr = attr->Next() ) {
+    Poco::XML::NamedNodeMap *map = node->attributes();
+    for( int i = 0; i < map->length(); i++ ) {
+        
+        //const char *name = (const char *) attr->name;
+        //const char *content = (const char *) attr->children->content;
+        
+        //const char *name = (const char *) attr->Name();
+        //const char *content = (const char *) attr->Value();
+        attr = (Poco::XML::Attr*) map->item(i);
+        const char *name = (const char *) attr->localName().c_str();
+        const char *content = (const char *) attr->getNodeValue().c_str();
+        
+        if (strcmp(name, "opacity") == 0)
+        {
+            state->opacity = atof((const char *)content);
+        }
+    }
+}
+
 
 /**
  * Parse paint attributes, if present.
@@ -1022,6 +1051,8 @@ void svgtiny_parse_paint_attributes(const Poco::XML::Element *node,
         
 		if (strcmp(name, "fill") == 0)
 			svgtiny_parse_color(content, &state->fill, state);
+        else if(strcmp(name,"opacity") == 0)
+            svgtiny_opacity_parser(node, state);
 		else if (strcmp(name, "stroke") == 0)
 			svgtiny_parse_color(content, &state->stroke, state);
 		else if (strcmp(name, "stroke-width") == 0)
@@ -1310,6 +1341,7 @@ struct svgtiny_shape *svgtiny_add_shape(struct svgtiny_parse_state *state)
 	shape->text = 0;
 	shape->fill = state->fill;
 	shape->stroke = state->stroke;
+    shape->opacity = state->opacity;
 	shape->stroke_width = lroundf((float) state->stroke_width *
 			(state->ctm.a + state->ctm.d) / 2.0);
 	if (0 < state->stroke_width && shape->stroke_width == 0)

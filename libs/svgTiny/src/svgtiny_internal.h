@@ -40,6 +40,8 @@ struct svgtiny_parse_state {
 
 	/* paint attributes */
 	svgtiny_colour fill;
+    float opacity;
+
 	svgtiny_colour stroke;
 	int stroke_width;
 
@@ -56,6 +58,8 @@ struct svgtiny_parse_state {
 struct svgtiny_list;
 
 /* svgtiny.c */
+void svgtiny_opacity_parser(const char *s, struct svgtiny_parse_state *state);
+
 float svgtiny_parse_length(const char *s, int viewport_size,
 		const struct svgtiny_parse_state state);
 void svgtiny_parse_color(const char *s, svgtiny_colour *c,

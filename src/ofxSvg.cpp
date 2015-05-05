@@ -110,6 +110,10 @@ void ofxSVG::setupShape(struct svgtiny_shape * shape, ofPath & path){
 	if(shape->fill != svgtiny_TRANSPARENT){
 		path.setFilled(true);
 		path.setFillHexColor(shape->fill);
+        ofColor color = path.getFillColor();
+        color.a = shape->opacity*255;
+        path.setColor(color);
+
 		path.setPolyWindingMode(OF_POLY_WINDING_NONZERO);
     }
 
