@@ -84,6 +84,11 @@ void ofxSVG::draw(float opacity){
     ofEnableAlphaBlending();
 }
 
+void ofxSVG::setFillColor(ofColor pathColor){
+    for(int i = 0; i < (int)paths.size(); i++){
+        paths[i].setFillColor(pathColor);
+    }
+}
 
 void ofxSVG::setupDiagram(struct svgtiny_diagram * diagram){
 
