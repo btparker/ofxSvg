@@ -91,6 +91,7 @@ void ofxSVG::setupDiagram(struct svgtiny_diagram * diagram){
 	height = diagram->height;
 
 	paths.clear();
+    boundingBox = ofRectangle();
 
 	for(int i = 0; i < (int)diagram->shape_count; i++){
 		if(diagram->shape[i].path){
@@ -100,6 +101,20 @@ void ofxSVG::setupDiagram(struct svgtiny_diagram * diagram){
 			ofLogWarning("ofxSVG") << "setupDiagram(): text: not implemented yet";
 		}
 	}
+}
+
+ofRectangle ofxSVG::getBoundingBoxOfPath(ofPath &path) {
+    ofRectangle rect;
+    for (int i=0; i<path.getOutline().size(); i++) {
+        ofRectangle b = path.getOutline().at(i).getBoundingBox();
+        if (i==0){
+            rect = b;
+        }
+        else{
+            rect.growToInclude(b);
+        }
+    }
+    return rect;
 }
 
 void ofxSVG::setupShape(struct svgtiny_shape * shape, ofPath & path){
@@ -114,7 +129,7 @@ void ofxSVG::setupShape(struct svgtiny_shape * shape, ofPath & path){
         color.a = shape->opacity*255;
         path.setColor(color);
 
-		path.setPolyWindingMode(OF_POLY_WINDING_NONZERO);
+		path.setPolyWindingMode(OF_POLY_WINDING_ODD);
     }
 
 	if(shape->stroke != svgtiny_TRANSPARENT){
@@ -147,4 +162,17 @@ void ofxSVG::setupShape(struct svgtiny_shape * shape, ofPath & path){
 			i += 1;
 		}
 	}
+    ofRectangle pathBoundingBox = getBoundingBoxOfPath(path);
+    if(pathBoundingBox.getArea() != 0.0){
+        if(boundingBox.getArea() == 0.0){
+            boundingBox = pathBoundingBox;
+        }
+        else{
+            boundingBox.growToInclude(pathBoundingBox);
+        }
+    }
+}
+
+ofRectangle ofxSVG::getBoundingBox(){
+    return boundingBox;
 }

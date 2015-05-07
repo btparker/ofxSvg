@@ -35,10 +35,14 @@ class ofxSVG {
         }
     
         void rasterize();
+    
+        static ofRectangle getBoundingBoxOfPath(ofPath &path);
+        ofRectangle getBoundingBox();
 
 	private:
 
 		float width, height;
+        ofRectangle boundingBox;
 
 		vector <ofPath> paths;
 
