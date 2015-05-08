@@ -39,6 +39,7 @@ class ofxSVG {
         static ofRectangle getBoundingBoxOfPath(ofPath &path);
         ofRectangle getBoundingBox();
         void setFillColor(ofColor color);
+    void clear();
 
 	private:
 

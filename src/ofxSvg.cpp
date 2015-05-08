@@ -2,7 +2,10 @@
 #include "ofConstants.h"
 
 ofxSVG::~ofxSVG(){
-	paths.clear();
+}
+
+void ofxSVG::clear(){
+    paths.clear();
     rasterized.clear();
 }
 
@@ -57,6 +60,8 @@ void ofxSVG::rasterize(){
         fbo.width = getWidth();
         fbo.height = getHeight();
         fbo.internalformat = GL_RGBA;
+        fbo.minFilter = GL_LINEAR;
+        fbo.maxFilter = GL_LINEAR;
         fbo.numSamples = 8;
         fbo.numColorbuffers = 3;
         
